@@ -206,6 +206,10 @@ class Reshaper
 
     /**
      * Determine the form of a character (isolated, final, initial, medial)
+     * Based on correct logic similar to PersianRender.php:
+     * - Check if previous character can connect forward (has initial form)
+     * - Check if current character can connect forward (has initial form)
+     * - Check if next character can connect backward (has final form)
      *
      * @param string $char Current character
      * @param string|null $prevChar Previous character
@@ -214,31 +218,38 @@ class Reshaper
      */
     private function determineForm(string $char, ?string $prevChar, ?string $nextChar): int
     {
-        $connectsToPrev = $prevChar !== null && $this->canConnect($prevChar, $char);
-        $connectsToNext = $nextChar !== null && $this->canConnect($char, $nextChar);
+        $result = 0;
 
-        if ($connectsToPrev && $connectsToNext) {
-            return 3; // Medial
-        } elseif ($connectsToPrev) {
-            return 1; // Final
-        } elseif ($connectsToNext) {
-            return 2; // Initial
-        } else {
-            return 0; // Isolated
+        // Check if current character can connect forward (to next character)
+        // Current character must have initial form (index 2) and next character must have final form (index 1)
+        if ($nextChar !== null && 
+            isset(self::CHARACTER_FORMS[$char]) &&
+            !empty(self::CHARACTER_FORMS[$char][2]) && // Current char has initial form
+            isset(self::CHARACTER_FORMS[$nextChar]) &&
+            !empty(self::CHARACTER_FORMS[$nextChar][1])) { // Next char has final form
+            $result += 4; // Can connect forward (initial)
         }
-    }
 
-    /**
-     * Check if two characters can connect
-     *
-     * @param string $prev Previous character
-     * @param string $next Next character
-     * @return bool True if characters can connect
-     */
-    private function canConnect(string $prev, string $next): bool
-    {
-        return in_array($prev, self::CONNECTING_CHARS, true) &&
-               !in_array($next, self::NON_CONNECTING_CHARS, true);
+        // Check if previous character can connect forward (to current character)
+        // Previous character must have initial form (index 2) and current character must have final form (index 1)
+        if ($prevChar !== null && 
+            isset(self::CHARACTER_FORMS[$prevChar]) &&
+            !empty(self::CHARACTER_FORMS[$prevChar][2]) && // Previous char has initial form
+            isset(self::CHARACTER_FORMS[$char]) &&
+            !empty(self::CHARACTER_FORMS[$char][1])) { // Current char has final form
+            $result += 2; // Can connect from previous (final)
+        }
+
+        // Determine form based on result
+        if ($result === 6) {
+            return 3; // Medial (connected from both sides)
+        } elseif ($result === 4) {
+            return 2; // Initial (connects to next)
+        } elseif ($result === 2) {
+            return 1; // Final (connected from previous)
+        } else {
+            return 0; // Isolated (no connections)
+        }
     }
 }
 
