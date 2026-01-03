@@ -78,5 +78,27 @@ $processed = $renderer->process($text, [
     'clean' => true,
 ]);
 echo "Original: $text\n";
-echo "Fully Processed: $processed\n";
+echo "Fully Processed: $processed\n\n";
+
+// Example 8: Static method calls (no need to instantiate)
+echo "=== Example 8: Static Method Calls ===\n";
+$text = 'سلام دنیا';
+
+// Using static methods directly
+$processed = PhpianRender::processStatic($text);
+echo "Static Process: $processed\n";
+
+$reshaped = PhpianRender::reshapeStatic($text);
+echo "Static Reshape: $reshaped\n";
+
+$isRTL = PhpianRender::isRTLStatic($text) ? 'Yes' : 'No';
+echo "Static IsRTL: $isRTL\n";
+
+$converted = PhpianRender::convertNumbersStatic('عدد 123', 'persian');
+echo "Static Convert: $converted\n\n";
+
+// Example 9: Get version
+echo "=== Example 9: Get Version ===\n";
+$version = PhpianRender::getVersion();
+echo "Package Version: $version\n";
 

@@ -93,5 +93,75 @@ class PhpianRenderTest extends TestCase
         $this->assertNotNull($this->render->getDiacriticsHandler());
         $this->assertNotNull($this->render->getHelper());
     }
+
+    public function testGetVersion(): void
+    {
+        $version = PhpianRender::getVersion();
+        $this->assertNotEmpty($version);
+        $this->assertIsString($version);
+        $this->assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', $version);
+    }
+
+    // Static method tests
+    public function testProcessStatic(): void
+    {
+        $text = 'سلام';
+        $result = PhpianRender::processStatic($text);
+        $this->assertNotEmpty($result);
+    }
+
+    public function testReshapeStatic(): void
+    {
+        $text = 'سلام';
+        $result = PhpianRender::reshapeStatic($text);
+        $this->assertNotEmpty($result);
+    }
+
+    public function testProcessBiDiStatic(): void
+    {
+        $text = 'سلام Hello';
+        $result = PhpianRender::processBiDiStatic($text);
+        $this->assertNotEmpty($result);
+    }
+
+    public function testConvertNumbersStatic(): void
+    {
+        $text = 'عدد 123';
+        $result = PhpianRender::convertNumbersStatic($text, 'persian');
+        $this->assertStringContainsString('۱۲۳', $result);
+    }
+
+    public function testWordWrapStatic(): void
+    {
+        $text = 'این یک متن طولانی است';
+        $result = PhpianRender::wordWrapStatic($text, 10);
+        $this->assertNotEmpty($result);
+    }
+
+    public function testIsRTLStatic(): void
+    {
+        $this->assertTrue(PhpianRender::isRTLStatic('سلام'));
+        $this->assertFalse(PhpianRender::isRTLStatic('Hello'));
+    }
+
+    public function testStaticAndInstanceMethodsProduceSameResults(): void
+    {
+        $text = 'سلام دنیا';
+        
+        // Test process
+        $instanceResult = $this->render->process($text);
+        $staticResult = PhpianRender::processStatic($text);
+        $this->assertEquals($instanceResult, $staticResult);
+        
+        // Test reshape
+        $instanceResult = $this->render->reshape($text);
+        $staticResult = PhpianRender::reshapeStatic($text);
+        $this->assertEquals($instanceResult, $staticResult);
+        
+        // Test isRTL
+        $instanceResult = $this->render->isRTL($text);
+        $staticResult = PhpianRender::isRTLStatic($text);
+        $this->assertEquals($instanceResult, $staticResult);
+    }
 }
 

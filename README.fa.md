@@ -80,7 +80,7 @@ composer require abdal/phpian-render
 ```json
 {
     "require": {
-        "abdal/phpian-render": "^1.0"
+        "abdal/phpian-render": "^1.1"
     }
 }
 ```
@@ -214,6 +214,40 @@ if ($renderer->isRTL($text1)) {
 if (!$renderer->isRTL($text2)) {
     echo 'متن LTR است';
 }
+```
+
+### استفاده از Static Methods (بدون نیاز به ایجاد نمونه)
+
+```php
+<?php
+
+use Abdal\PhpianRender\PhpianRender;
+
+// استفاده از متدهای static بدون نیاز به ایجاد نمونه
+$text = 'سلام دنیا';
+
+// پردازش کامل
+$processed = PhpianRender::processStatic($text, [
+    'reshape' => true,
+    'bidi' => true,
+    'convertNumbers' => true,
+]);
+
+// Reshape
+$reshaped = PhpianRender::reshapeStatic($text);
+
+// تبدیل اعداد
+$converted = PhpianRender::convertNumbersStatic('عدد 123', 'persian');
+
+// تشخیص RTL
+$isRTL = PhpianRender::isRTLStatic($text);
+
+// Word Wrap
+$wrapped = PhpianRender::wordWrapStatic('متن طولانی', 20);
+
+// دریافت نسخه پکیج
+$version = PhpianRender::getVersion();
+echo "Version: $version";
 ```
 
 ### استفاده از کلاس‌های مستقل

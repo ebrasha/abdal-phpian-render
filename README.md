@@ -80,7 +80,7 @@ Or add to `composer.json`:
 ```json
 {
     "require": {
-        "abdal/phpian-render": "^1.0"
+        "abdal/phpian-render": "^1.1"
     }
 }
 ```
@@ -214,6 +214,40 @@ if ($renderer->isRTL($text1)) {
 if (!$renderer->isRTL($text2)) {
     echo 'Text is LTR';
 }
+```
+
+### Using Static Methods (No Instance Required)
+
+```php
+<?php
+
+use Abdal\PhpianRender\PhpianRender;
+
+// Use static methods without creating an instance
+$text = 'سلام دنیا';
+
+// Full processing
+$processed = PhpianRender::processStatic($text, [
+    'reshape' => true,
+    'bidi' => true,
+    'convertNumbers' => true,
+]);
+
+// Reshape
+$reshaped = PhpianRender::reshapeStatic($text);
+
+// Convert numbers
+$converted = PhpianRender::convertNumbersStatic('عدد 123', 'persian');
+
+// RTL detection
+$isRTL = PhpianRender::isRTLStatic($text);
+
+// Word wrap
+$wrapped = PhpianRender::wordWrapStatic('متن طولانی', 20);
+
+// Get package version
+$version = PhpianRender::getVersion();
+echo "Version: $version";
 ```
 
 ### Using Standalone Classes

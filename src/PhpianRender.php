@@ -22,6 +22,7 @@ namespace Abdal\PhpianRender;
 /**
  * PhpianRender main class
  * Provides a unified interface for all RTL text processing features
+ * Supports both instance and static method calls
  */
 class PhpianRender
 {
@@ -30,6 +31,11 @@ class PhpianRender
     private NumberConverter $numberConverter;
     private DiacriticsHandler $diacriticsHandler;
     private Helper $helper;
+
+    /**
+     * Static instance for static method calls
+     */
+    private static ?PhpianRender $staticInstance = null;
 
     /**
      * Constructor
@@ -41,6 +47,19 @@ class PhpianRender
         $this->numberConverter = new NumberConverter();
         $this->diacriticsHandler = new DiacriticsHandler();
         $this->helper = new Helper();
+    }
+
+    /**
+     * Get or create static instance
+     *
+     * @return PhpianRender
+     */
+    private static function getStaticInstance(): PhpianRender
+    {
+        if (self::$staticInstance === null) {
+            self::$staticInstance = new self();
+        }
+        return self::$staticInstance;
     }
 
     /**
@@ -59,6 +78,7 @@ class PhpianRender
             'numberLocale' => 'persian', // 'persian' or 'arabic'
             'preserveDiacritics' => true,
             'clean' => false,
+            'reverse' => true, // Reverse text for RTL display (like PersianRender)
         ];
 
         $options = array_merge($defaultOptions, $options);
@@ -77,6 +97,9 @@ class PhpianRender
             $diacritics = $extracted['diacritics'];
         }
 
+        // Check if text is mixed (RTL + LTR) or pure RTL
+        $isMixed = $this->isMixedText($text);
+
         // Reshape characters
         $reshapedText = $text;
         if ($options['reshape']) {
@@ -94,8 +117,17 @@ class PhpianRender
         }
 
         // Process bidirectional text
+        // For mixed texts (RTL + LTR), use BiDi algorithm
+        // For pure RTL texts, just reverse the entire text (like PersianRender)
         if ($options['bidi']) {
-            $text = $this->bidi->process($text);
+            if ($isMixed) {
+                // Mixed text: use BiDi algorithm
+                $text = $this->bidi->process($text);
+            } elseif ($options['reverse'] && $this->helper->isRTL($text)) {
+                // Pure RTL text: reverse entire text (like PersianRender.php)
+                $chars = mb_str_split($text, 1, 'UTF-8');
+                $text = implode('', array_reverse($chars));
+            }
         }
 
         // Convert numbers
@@ -107,6 +139,64 @@ class PhpianRender
         }
 
         return $text;
+    }
+
+    /**
+     * Check if text contains both RTL and LTR characters
+     *
+     * @param string $text Input text
+     * @return bool True if text is mixed
+     */
+    private function isMixedText(string $text): bool
+    {
+        $hasRTL = false;
+        $hasLTR = false;
+        $chars = mb_str_split($text, 1, 'UTF-8');
+
+        foreach ($chars as $char) {
+            if (ctype_space($char) || ctype_punct($char)) {
+                continue;
+            }
+
+            // Check if it's RTL
+            $codePoint = $this->getCharCodePoint($char);
+            if (($codePoint >= 0x0590 && $codePoint <= 0x08FF) ||
+                ($codePoint >= 0x0600 && $codePoint <= 0x06FF) ||
+                in_array($codePoint, [0x067E, 0x0686, 0x06AF, 0x0698])) {
+                $hasRTL = true;
+            } else {
+                // Check if it's LTR (Latin characters or numbers)
+                if (($codePoint >= 0x0041 && $codePoint <= 0x007A) ||
+                    ($codePoint >= 0x0030 && $codePoint <= 0x0039)) {
+                    $hasLTR = true;
+                }
+            }
+
+            if ($hasRTL && $hasLTR) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get Unicode code point of a character
+     *
+     * @param string $char Character
+     * @return int Code point
+     */
+    private function getCharCodePoint(string $char): int
+    {
+        $bytes = unpack('C*', mb_convert_encoding($char, 'UTF-32BE', 'UTF-8'));
+        if (empty($bytes)) {
+            return 0;
+        }
+        $codePoint = 0;
+        foreach ($bytes as $byte) {
+            $codePoint = ($codePoint << 8) | $byte;
+        }
+        return $codePoint;
     }
 
     /**
@@ -216,6 +306,89 @@ class PhpianRender
     public function getHelper(): Helper
     {
         return $this->helper;
+    }
+
+    /**
+     * Get package version
+     *
+     * @return string Package version
+     */
+    public static function getVersion(): string
+    {
+        return Version::getVersion();
+    }
+
+    // ========== Static Methods ==========
+
+    /**
+     * Process text with all RTL features (static)
+     *
+     * @param string $text Input text
+     * @param array $options Processing options
+     * @return string Processed text
+     */
+    public static function processStatic(string $text, array $options = []): string
+    {
+        return self::getStaticInstance()->process($text, $options);
+    }
+
+    /**
+     * Reshape text only (static)
+     *
+     * @param string $text Input text
+     * @return string Reshaped text
+     */
+    public static function reshapeStatic(string $text): string
+    {
+        return self::getStaticInstance()->reshape($text);
+    }
+
+    /**
+     * Process bidirectional text only (static)
+     *
+     * @param string $text Input text
+     * @return string Processed text
+     */
+    public static function processBiDiStatic(string $text): string
+    {
+        return self::getStaticInstance()->processBiDi($text);
+    }
+
+    /**
+     * Convert numbers (static)
+     *
+     * @param string $text Input text
+     * @param string $locale Target locale ('persian' or 'arabic')
+     * @return string Text with converted numbers
+     */
+    public static function convertNumbersStatic(string $text, string $locale = 'persian'): string
+    {
+        return self::getStaticInstance()->convertNumbers($text, $locale);
+    }
+
+    /**
+     * Word wrap for RTL text (static)
+     *
+     * @param string $text Text to wrap
+     * @param int $width Maximum line width
+     * @param string $break Line break character
+     * @param bool $cut Whether to cut words
+     * @return string Wrapped text
+     */
+    public static function wordWrapStatic(string $text, int $width = 75, string $break = "\n", bool $cut = false): string
+    {
+        return self::getStaticInstance()->wordWrap($text, $width, $break, $cut);
+    }
+
+    /**
+     * Check if text is RTL (static)
+     *
+     * @param string $text Text to check
+     * @return bool True if RTL
+     */
+    public static function isRTLStatic(string $text): bool
+    {
+        return self::getStaticInstance()->isRTL($text);
     }
 }
 
