@@ -75,7 +75,7 @@ class PhpianRender
             'reshape' => true,
             'bidi' => true,
             'convertNumbers' => false,
-            'numberLocale' => 'persian', // 'persian' or 'arabic'
+            'numberLocale' => 'persian', // Only Persian is supported
             'preserveDiacritics' => true,
             'clean' => false,
             'reverse' => true, // Reverse text for RTL display (like PersianRender)
@@ -225,7 +225,7 @@ class PhpianRender
      * Convert numbers
      *
      * @param string $text Input text
-     * @param string $locale Target locale ('persian' or 'arabic')
+     * @param string $locale Target locale (only 'persian' is supported)
      * @return string Text with converted numbers
      */
     public function convertNumbers(string $text, string $locale = 'persian'): string
@@ -358,7 +358,7 @@ class PhpianRender
      * Convert numbers (static)
      *
      * @param string $text Input text
-     * @param string $locale Target locale ('persian' or 'arabic')
+     * @param string $locale Target locale (only 'persian' is supported)
      * @return string Text with converted numbers
      */
     public static function convertNumbersStatic(string $text, string $locale = 'persian'): string

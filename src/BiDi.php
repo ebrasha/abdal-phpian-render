@@ -21,12 +21,12 @@ namespace Abdal\PhpianRender;
 
 /**
  * BiDi class handles bidirectional text processing
- * for mixed Persian/Arabic and English text
+ * for mixed Persian and English text
  */
 class BiDi
 {
     /**
-     * RTL characters range (Arabic, Persian, Hebrew, etc.)
+     * RTL characters range (Persian, Hebrew, etc.)
      */
     private const RTL_RANGE_START = 0x0590;
     private const RTL_RANGE_END = 0x08FF;

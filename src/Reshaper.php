@@ -8,7 +8,7 @@
  * Author       : Ebrahim Shafiei (EbraSha)
  * Email        : Prof.Shafiei@Gmail.com
  * Created On   : 2026-01-02 21:35:22
- * Description  : Comprehensive character reshaping algorithm for Arabic/Persian text
+ * Description  : Comprehensive character reshaping algorithm for Persian text
  * -------------------------------------------------------------------
  *
  * "Coding is an engaging and beloved hobby for me. I passionately and insatiably pursue knowledge in cybersecurity and programming."
@@ -20,7 +20,7 @@
 namespace Abdal\PhpianRender;
 
 /**
- * Reshaper class handles the conversion of Arabic/Persian characters
+ * Reshaper class handles the conversion of Persian characters
  * to their contextual forms (initial, medial, final, isolated)
  */
 class Reshaper
@@ -29,22 +29,25 @@ class Reshaper
      * Arabic/Persian character forms mapping
      * Format: [character] => [isolated, final, initial, medial]
      */
+    /**
+     * Persian character forms mapping
+     * Format: [character] => [isolated, final, initial, medial]
+     * Only Persian characters are supported (no Arabic-specific characters)
+     */
     private const CHARACTER_FORMS = [
-        // Alef variations
-        "\u{0622}" => ["\u{FE81}", "\u{FE82}", "\u{FE81}", "\u{FE82}"], // آ
-        "\u{0623}" => ["\u{FE83}", "\u{FE84}", "\u{FE83}", "\u{FE84}"], // أ
-        "\u{0625}" => ["\u{FE87}", "\u{FE88}", "\u{FE87}", "\u{FE88}"], // إ
-        "\u{0627}" => ["\u{FE8D}", "\u{FE8E}", "\u{FE8D}", "\u{FE8E}"], // ا
+        // Alef variations (used in Persian)
+        "\u{0622}" => ["\u{FE81}", "\u{FE82}", "", ""], // آ - final only, no initial/medial
+        "\u{0627}" => ["\u{FE8D}", "\u{FE8E}", "", ""], // ا - final only, no initial/medial (doesn't connect forward)
+        
+        // Common Persian characters
         "\u{0628}" => ["\u{FE8F}", "\u{FE90}", "\u{FE91}", "\u{FE92}"], // ب
         "\u{062A}" => ["\u{FE95}", "\u{FE96}", "\u{FE97}", "\u{FE98}"], // ت
-        "\u{062B}" => ["\u{FE99}", "\u{FE9A}", "\u{FE9B}", "\u{FE9C}"], // ث
         "\u{062C}" => ["\u{FE9D}", "\u{FE9E}", "\u{FE9F}", "\u{FEA0}"], // ج
         "\u{062D}" => ["\u{FEA1}", "\u{FEA2}", "\u{FEA3}", "\u{FEA4}"], // ح
         "\u{062E}" => ["\u{FEA5}", "\u{FEA6}", "\u{FEA7}", "\u{FEA8}"], // خ
-        "\u{062F}" => ["\u{FEA9}", "\u{FEAA}", "\u{FEA9}", "\u{FEAA}"], // د
-        "\u{0630}" => ["\u{FEAB}", "\u{FEAC}", "\u{FEAB}", "\u{FEAC}"], // ذ
-        "\u{0631}" => ["\u{FEAD}", "\u{FEAE}", "\u{FEAD}", "\u{FEAE}"], // ر
-        "\u{0632}" => ["\u{FEAF}", "\u{FEB0}", "\u{FEAF}", "\u{FEB0}"], // ز
+        "\u{062F}" => ["\u{FEA9}", "\u{FEAA}", "", ""], // د - final only, no initial/medial
+        "\u{0631}" => ["\u{FEAD}", "\u{FEAE}", "", ""], // ر - final only, no initial/medial
+        "\u{0632}" => ["\u{FEAF}", "\u{FEB0}", "", ""], // ز - final only, no initial/medial
         "\u{0633}" => ["\u{FEB1}", "\u{FEB2}", "\u{FEB3}", "\u{FEB4}"], // س
         "\u{0634}" => ["\u{FEB5}", "\u{FEB6}", "\u{FEB7}", "\u{FEB8}"], // ش
         "\u{0635}" => ["\u{FEB9}", "\u{FEBA}", "\u{FEBB}", "\u{FEBC}"], // ص
@@ -55,63 +58,52 @@ class Reshaper
         "\u{063A}" => ["\u{FECD}", "\u{FECE}", "\u{FECF}", "\u{FED0}"], // غ
         "\u{0641}" => ["\u{FED1}", "\u{FED2}", "\u{FED3}", "\u{FED4}"], // ف
         "\u{0642}" => ["\u{FED5}", "\u{FED6}", "\u{FED7}", "\u{FED8}"], // ق
-        "\u{0643}" => ["\u{FED9}", "\u{FEDA}", "\u{FEDB}", "\u{FEDC}"], // ك
+        "\u{06A9}" => ["\u{FED9}", "\u{FEDA}", "\u{FEDB}", "\u{FEDC}"], // ک (Persian Kaf)
         "\u{0644}" => ["\u{FEDD}", "\u{FEDE}", "\u{FEDF}", "\u{FEE0}"], // ل
         "\u{0645}" => ["\u{FEE1}", "\u{FEE2}", "\u{FEE3}", "\u{FEE4}"], // م
         "\u{0646}" => ["\u{FEE5}", "\u{FEE6}", "\u{FEE7}", "\u{FEE8}"], // ن
         "\u{0647}" => ["\u{FEE9}", "\u{FEEA}", "\u{FEEB}", "\u{FEEC}"], // ه
-        "\u{0648}" => ["\u{FEED}", "\u{FEEE}", "\u{FEED}", "\u{FEEE}"], // و
-        "\u{064A}" => ["\u{FEF1}", "\u{FEF2}", "\u{FEF3}", "\u{FEF4}"], // ي
-        "\u{0649}" => ["\u{FEEF}", "\u{FEF0}", "\u{FEEF}", "\u{FEF0}"], // ى
+        "\u{0648}" => ["\u{FEED}", "\u{FEEE}", "", ""], // و - final only, no initial/medial
         
         // Persian specific characters
         "\u{067E}" => ["\u{FB56}", "\u{FB57}", "\u{FB58}", "\u{FB59}"], // پ
         "\u{0686}" => ["\u{FB7A}", "\u{FB7B}", "\u{FB7C}", "\u{FB7D}"], // چ
         "\u{06AF}" => ["\u{FB92}", "\u{FB93}", "\u{FB94}", "\u{FB95}"], // گ
-        "\u{0698}" => ["\u{FB8A}", "\u{FB8B}", "\u{FB8A}", "\u{FB8B}"], // ژ
+        "\u{0698}" => ["\u{FB8A}", "\u{FB8B}", "", ""], // ژ - final only, no initial/medial
         
-        // Yeh variations (Persian Yeh)
+        // Persian Yeh (ی)
         // Format: [isolated, final, initial, medial]
         // U+06CC: Persian Yeh (ی)
-        // Important: We must NOT use Arabic Yeh (U+064A) forms (FEF1-FEF4)
-        // Persian Yeh U+06CC has its own presentation forms in Arabic Presentation Forms-B:
-        // However, the standard doesn't have specific forms for U+06CC
-        // So we should use the character itself or similar forms
-        // Based on PersianRender.php behavior, we keep it as Persian Yeh
-        // Let's use: isolated=06CC, final=06CC, initial=06CC, medial=06CC (keep as Persian Yeh)
-        // But for proper connection, we might need to use Arabic Yeh forms temporarily
-        // Actually, let's check: FEFC is Lam-Alef isolated, not for Yeh!
-        // The correct approach: keep Persian Yeh as itself in all forms to avoid conversion
-        "\u{06CC}" => ["\u{06CC}", "\u{06CC}", "\u{06CC}", "\u{06CC}"], // ی (Persian Yeh) - keep as Persian Yeh
+        // Based on PersianRender.php: 'ی' => ['ی', 'ی', 'ی'] which means all forms are filled
+        // All forms are filled to allow proper connection to other characters
+        "\u{06CC}" => ["\u{06CC}", "\u{06CC}", "\u{06CC}", "\u{06CC}"], // ی (Persian Yeh) - all forms filled for connection
     ];
 
     /**
-     * Characters that connect to the next character
+     * Persian characters that connect to the next character
      */
     private const CONNECTING_CHARS = [
-        "\u{0628}", "\u{062A}", "\u{062B}", "\u{062C}", "\u{062D}", "\u{062E}",
+        "\u{0628}", "\u{062A}", "\u{062C}", "\u{062D}", "\u{062E}",
         "\u{0633}", "\u{0634}", "\u{0635}", "\u{0636}", "\u{0637}", "\u{0638}",
-        "\u{0639}", "\u{063A}", "\u{0641}", "\u{0642}", "\u{0643}", "\u{0644}",
-        "\u{0645}", "\u{0646}", "\u{0647}", "\u{064A}", "\u{0649}", "\u{067E}",
+        "\u{0639}", "\u{063A}", "\u{0641}", "\u{0642}", "\u{06A9}", "\u{0644}",
+        "\u{0645}", "\u{0646}", "\u{0647}", "\u{067E}",
         "\u{0686}", "\u{06AF}", "\u{06CC}"
     ];
 
     /**
-     * Characters that don't connect to the previous character
+     * Persian characters that don't connect to the previous character
      */
     private const NON_CONNECTING_CHARS = [
-        "\u{0622}", "\u{0623}", "\u{0625}", "\u{0627}", "\u{062F}", "\u{0630}",
+        "\u{0622}", "\u{0627}", "\u{062F}",
         "\u{0631}", "\u{0632}", "\u{0648}", "\u{0698}"
     ];
 
     /**
-     * Lam-Alef combinations
+     * Lam-Alef combinations (Persian only - no Arabic-specific combinations)
      */
     private const LAM_ALEF_COMBINATIONS = [
         "\u{0644}\u{0627}" => "\u{FEFB}", // لا
         "\u{0644}\u{0622}" => "\u{FEF5}", // لآ
-        "\u{0644}\u{0623}" => "\u{FEF7}", // لأ
-        "\u{0644}\u{0625}" => "\u{FEF9}", // لإ
     ];
 
     /**
@@ -125,7 +117,7 @@ class Reshaper
     ];
 
     /**
-     * Reshape Arabic/Persian text to contextual forms
+     * Reshape Persian text to contextual forms
      *
      * @param string $text Input text to reshape
      * @return string Reshaped text with proper character forms
@@ -230,23 +222,28 @@ class Reshaper
     {
         $result = 0;
 
+        // Based on PersianRender.php logic:
         // Check if current character can connect forward (to next character)
         // Current character must have initial form (index 2) and next character must have final form (index 1)
+        // In PersianRender: checks if char[2] exists and next[0] exists
+        // In our format [isolated, final, initial, medial]: checks if char[2] exists and next[1] exists
         if ($nextChar !== null && 
             isset(self::CHARACTER_FORMS[$char]) &&
-            !empty(self::CHARACTER_FORMS[$char][2]) && // Current char has initial form
             isset(self::CHARACTER_FORMS[$nextChar]) &&
-            !empty(self::CHARACTER_FORMS[$nextChar][1])) { // Next char has final form
+            self::CHARACTER_FORMS[$char][2] !== '' && // Current char has initial form (not empty)
+            self::CHARACTER_FORMS[$nextChar][1] !== '') { // Next char has final form (not empty)
             $result += 4; // Can connect forward (initial)
         }
 
         // Check if previous character can connect forward (to current character)
         // Previous character must have initial form (index 2) and current character must have final form (index 1)
+        // In PersianRender: checks if char[0] exists and prev[2] exists
+        // In our format: checks if char[1] exists and prev[2] exists
         if ($prevChar !== null && 
             isset(self::CHARACTER_FORMS[$prevChar]) &&
-            !empty(self::CHARACTER_FORMS[$prevChar][2]) && // Previous char has initial form
             isset(self::CHARACTER_FORMS[$char]) &&
-            !empty(self::CHARACTER_FORMS[$char][1])) { // Current char has final form
+            self::CHARACTER_FORMS[$prevChar][2] !== '' && // Previous char has initial form (not empty)
+            self::CHARACTER_FORMS[$char][1] !== '') { // Current char has final form (not empty)
             $result += 2; // Can connect from previous (final)
         }
 

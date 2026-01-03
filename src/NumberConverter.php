@@ -8,7 +8,7 @@
  * Author       : Ebrahim Shafiei (EbraSha)
  * Email        : Prof.Shafiei@Gmail.com
  * Created On   : 2026-01-02 21:35:22
- * Description  : Number conversion between English, Persian, and Arabic numerals
+ * Description  : Number conversion between English and Persian numerals
  * -------------------------------------------------------------------
  *
  * "Coding is an engaging and beloved hobby for me. I passionately and insatiably pursue knowledge in cybersecurity and programming."
@@ -21,7 +21,7 @@ namespace Abdal\PhpianRender;
 
 /**
  * NumberConverter class handles conversion between
- * English, Persian, and Arabic numerals
+ * English and Persian numerals
  */
 class NumberConverter
 {
@@ -135,6 +135,8 @@ class NumberConverter
 
     /**
      * Convert any digits (Persian/Arabic) to English
+     * Note: Arabic digits are still supported for conversion to English
+     * but conversion to Arabic is not supported (Persian only)
      *
      * @param string $text Input text
      * @return string Text with English digits
@@ -142,27 +144,23 @@ class NumberConverter
     public function toEnglish(string $text): string
     {
         $text = $this->persianToEnglish($text);
-        $text = $this->arabicToEnglish($text);
+        $text = $this->arabicToEnglish($text); // Still support reading Arabic digits
         return $text;
     }
 
     /**
-     * Detect and convert digits based on locale
+     * Convert digits to Persian
+     * Note: Only Persian locale is supported (no Arabic conversion)
      *
      * @param string $text Input text
-     * @param string $locale Target locale ('persian' or 'arabic')
-     * @return string Converted text
+     * @return string Converted text with Persian digits
      */
-    public function convertByLocale(string $text, string $locale = 'persian'): string
+    public function convertByLocale(string $text): string
     {
         // First convert to English (normalize)
         $text = $this->toEnglish($text);
 
-        // Then convert to target locale
-        if ($locale === 'arabic') {
-            return $this->toArabic($text);
-        }
-
+        // Convert to Persian
         return $this->toPersian($text);
     }
 }

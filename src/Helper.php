@@ -38,7 +38,7 @@ class Helper
     ];
 
     /**
-     * Persian/Arabic specific characters
+     * Persian specific characters
      */
     private const PERSIAN_ARABIC_CHARS = [
         0x067E, 0x0686, 0x06AF, 0x0698, // Persian: پ, چ, گ, ژ

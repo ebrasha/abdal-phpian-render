@@ -8,7 +8,7 @@
  * Author       : Ebrahim Shafiei (EbraSha)
  * Email        : Prof.Shafiei@Gmail.com
  * Created On   : 2026-01-02 21:35:22
- * Description  : Handles Arabic diacritics (tashkeel) preservation during text processing
+ * Description  : Handles Persian diacritics (tashkeel) preservation during text processing
  * -------------------------------------------------------------------
  *
  * "Coding is an engaging and beloved hobby for me. I passionately and insatiably pursue knowledge in cybersecurity and programming."
@@ -20,7 +20,7 @@
 namespace Abdal\PhpianRender;
 
 /**
- * DiacriticsHandler class manages Arabic diacritics
+ * DiacriticsHandler class manages Persian diacritics
  * (fatha, damma, kasra, tanween, etc.)
  */
 class DiacriticsHandler
