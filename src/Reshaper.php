@@ -72,7 +72,17 @@ class Reshaper
         
         // Yeh variations (Persian Yeh)
         // Format: [isolated, final, initial, medial]
-        "\u{06CC}" => ["\u{FBFC}", "\u{FBFC}", "\u{FBFD}", "\u{FBFE}"], // ی (Persian Yeh)
+        // U+06CC: Persian Yeh (ی)
+        // Important: We must NOT use Arabic Yeh (U+064A) forms (FEF1-FEF4)
+        // Persian Yeh U+06CC has its own presentation forms in Arabic Presentation Forms-B:
+        // However, the standard doesn't have specific forms for U+06CC
+        // So we should use the character itself or similar forms
+        // Based on PersianRender.php behavior, we keep it as Persian Yeh
+        // Let's use: isolated=06CC, final=06CC, initial=06CC, medial=06CC (keep as Persian Yeh)
+        // But for proper connection, we might need to use Arabic Yeh forms temporarily
+        // Actually, let's check: FEFC is Lam-Alef isolated, not for Yeh!
+        // The correct approach: keep Persian Yeh as itself in all forms to avoid conversion
+        "\u{06CC}" => ["\u{06CC}", "\u{06CC}", "\u{06CC}", "\u{06CC}"], // ی (Persian Yeh) - keep as Persian Yeh
     ];
 
     /**
