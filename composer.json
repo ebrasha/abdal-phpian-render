@@ -2,7 +2,7 @@
     "name": "abdal/phpian-render",
     "description": "Comprehensive PHP package for Persian/Arabic text rendering in graphical environments with RTL support",
     "type": "library",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "keywords": [
         "persian",
         "arabic",

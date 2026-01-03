@@ -26,224 +26,265 @@ namespace Abdal\PhpianRender;
 class Reshaper
 {
     /**
-     * Arabic/Persian character forms mapping
-     * Format: [character] => [isolated, final, initial, medial]
-     */
-    /**
-     * Persian character forms mapping
-     * Format: [character] => [isolated, final, initial, medial]
-     * Only Persian characters are supported (no Arabic-specific characters)
-     */
-    private const CHARACTER_FORMS = [
-        // Alef variations (used in Persian)
-        "\u{0622}" => ["\u{FE81}", "\u{FE82}", "", ""], // آ - final only, no initial/medial
-        "\u{0627}" => ["\u{FE8D}", "\u{FE8E}", "", ""], // ا - final only, no initial/medial (doesn't connect forward)
-        
-        // Common Persian characters
-        "\u{0628}" => ["\u{FE8F}", "\u{FE90}", "\u{FE91}", "\u{FE92}"], // ب
-        "\u{062A}" => ["\u{FE95}", "\u{FE96}", "\u{FE97}", "\u{FE98}"], // ت
-        "\u{062C}" => ["\u{FE9D}", "\u{FE9E}", "\u{FE9F}", "\u{FEA0}"], // ج
-        "\u{062D}" => ["\u{FEA1}", "\u{FEA2}", "\u{FEA3}", "\u{FEA4}"], // ح
-        "\u{062E}" => ["\u{FEA5}", "\u{FEA6}", "\u{FEA7}", "\u{FEA8}"], // خ
-        "\u{062F}" => ["\u{FEA9}", "\u{FEAA}", "", ""], // د - final only, no initial/medial
-        "\u{0631}" => ["\u{FEAD}", "\u{FEAE}", "", ""], // ر - final only, no initial/medial
-        "\u{0632}" => ["\u{FEAF}", "\u{FEB0}", "", ""], // ز - final only, no initial/medial
-        "\u{0633}" => ["\u{FEB1}", "\u{FEB2}", "\u{FEB3}", "\u{FEB4}"], // س
-        "\u{0634}" => ["\u{FEB5}", "\u{FEB6}", "\u{FEB7}", "\u{FEB8}"], // ش
-        "\u{0635}" => ["\u{FEB9}", "\u{FEBA}", "\u{FEBB}", "\u{FEBC}"], // ص
-        "\u{0636}" => ["\u{FEBD}", "\u{FEBE}", "\u{FEBF}", "\u{FEC0}"], // ض
-        "\u{0637}" => ["\u{FEC1}", "\u{FEC2}", "\u{FEC3}", "\u{FEC4}"], // ط
-        "\u{0638}" => ["\u{FEC5}", "\u{FEC6}", "\u{FEC7}", "\u{FEC8}"], // ظ
-        "\u{0639}" => ["\u{FEC9}", "\u{FECA}", "\u{FECB}", "\u{FECC}"], // ع
-        "\u{063A}" => ["\u{FECD}", "\u{FECE}", "\u{FECF}", "\u{FED0}"], // غ
-        "\u{0641}" => ["\u{FED1}", "\u{FED2}", "\u{FED3}", "\u{FED4}"], // ف
-        "\u{0642}" => ["\u{FED5}", "\u{FED6}", "\u{FED7}", "\u{FED8}"], // ق
-        "\u{06A9}" => ["\u{FB8E}", "\u{FB8F}", "\u{FB90}", "\u{FB91}"], // ک (Persian Kaf)
-        "\u{0644}" => ["\u{FEDD}", "\u{FEDE}", "\u{FEDF}", "\u{FEE0}"], // ل
-        "\u{0645}" => ["\u{FEE1}", "\u{FEE2}", "\u{FEE3}", "\u{FEE4}"], // م
-        "\u{0646}" => ["\u{FEE5}", "\u{FEE6}", "\u{FEE7}", "\u{FEE8}"], // ن
-        "\u{0647}" => ["\u{FEE9}", "\u{FEEA}", "\u{FEEB}", "\u{FEEC}"], // ه
-        "\u{0648}" => ["\u{FEED}", "\u{FEEE}", "", ""], // و - final only, no initial/medial
-        
-        // Persian specific characters
-        "\u{067E}" => ["\u{FB56}", "\u{FB57}", "\u{FB58}", "\u{FB59}"], // پ
-        "\u{0686}" => ["\u{FB7A}", "\u{FB7B}", "\u{FB7C}", "\u{FB7D}"], // چ
-        "\u{06AF}" => ["\u{FB92}", "\u{FB93}", "\u{FB94}", "\u{FB95}"], // گ
-        "\u{0698}" => ["\u{FB8A}", "\u{FB8B}", "", ""], // ژ - final only, no initial/medial
-        
-        // Persian Yeh (ی)
-        // Format: [isolated, final, initial, medial]
-        // U+06CC: Persian Yeh (ی)
-        // Correct Unicode Presentation Forms-B for Persian Yeh:
-        // Isolated: FBFC, Final: FBFD, Initial: FBFE, Medial: FBFF
-        "\u{06CC}" => ["\u{FBFC}", "\u{FBFD}", "\u{FBFE}", "\u{FBFF}"], // ی (Persian Yeh)
-    ];
-
-    /**
-     * Persian characters that connect to the next character
-     */
-    private const CONNECTING_CHARS = [
-        "\u{0628}", "\u{062A}", "\u{062C}", "\u{062D}", "\u{062E}",
-        "\u{0633}", "\u{0634}", "\u{0635}", "\u{0636}", "\u{0637}", "\u{0638}",
-        "\u{0639}", "\u{063A}", "\u{0641}", "\u{0642}", "\u{06A9}", "\u{0644}",
-        "\u{0645}", "\u{0646}", "\u{0647}", "\u{067E}",
-        "\u{0686}", "\u{06AF}", "\u{06CC}"
-    ];
-
-    /**
-     * Persian characters that don't connect to the previous character
-     */
-    private const NON_CONNECTING_CHARS = [
-        "\u{0622}", "\u{0627}", "\u{062F}",
-        "\u{0631}", "\u{0632}", "\u{0648}", "\u{0698}"
-    ];
-
-    /**
-     * Lam-Alef combinations (Persian only - no Arabic-specific combinations)
-     */
-    private const LAM_ALEF_COMBINATIONS = [
-        "\u{0644}\u{0627}" => "\u{FEFB}", // لا
-        "\u{0644}\u{0622}" => "\u{FEF5}", // لآ
-    ];
-
-    /**
-     * Diacritics (tashkeel) that should be preserved
-     */
-    private const DIACRITICS = [
-        "\u{064B}", "\u{064C}", "\u{064D}", "\u{064E}", "\u{064F}", "\u{0650}",
-        "\u{0651}", "\u{0652}", "\u{0653}", "\u{0654}", "\u{0655}", "\u{0656}",
-        "\u{0657}", "\u{0658}", "\u{0659}", "\u{065A}", "\u{065B}", "\u{065C}",
-        "\u{065D}", "\u{065E}", "\u{065F}", "\u{0670}"
-    ];
-
-    /**
-     * Reshape Persian text to contextual forms
+     * Map of Persian characters to their presentation forms.
+     * Each key is the Unicode point (decimal), and the value is an array of forms:
+     * [Isolated, Final, Initial, Medial]
      *
-     * @param string $text Input text to reshape
-     * @return string Reshaped text with proper character forms
+     * @var array
+     */
+    private array $charsMap;
+
+    /**
+     * Characters that do not connect to the left (next character).
+     * Examples: Alef, Dal, Zal, Re, Ze, Zhe, Vav.
+     *
+     * @var array
+     */
+    private array $nonConnectors;
+
+    /**
+     * Constructor to initialize the character maps.
+     */
+    public function __construct()
+    {
+        $this->initializeMaps();
+    }
+
+    /**
+     * The main reshaping method.
+     *
+     * @param string $text The input string (UTF-8).
+     * @return string The reshaped string with presentation forms.
      */
     public function reshape(string $text): string
     {
         if (empty($text)) {
-            return $text;
+            return '';
         }
 
-        // Handle Lam-Alef combinations first
-        $text = $this->handleLamAlef($text);
+        // Convert the string to an array of Unicode code points
+        $codePoints = $this->utf8ToUnicode($text);
+        $count = count($codePoints);
+        $result = [];
 
-        // Separate diacritics from base characters
-        $chars = $this->separateDiacritics(mb_str_split($text, 1, 'UTF-8'));
-        
-        $reshaped = [];
-        $length = count($chars);
+        for ($i = 0; $i < $count; $i++) {
+            $current = $codePoints[$i];
 
-        for ($i = 0; $i < $length; $i++) {
-            $char = $chars[$i]['char'];
-            $diacritics = $chars[$i]['diacritics'];
-
-            if (!isset(self::CHARACTER_FORMS[$char])) {
-                $reshaped[] = $char . $diacritics;
+            // If the character is not in our map, keep it as is
+            if (!isset($this->charsMap[$current])) {
+                $result[] = $current;
                 continue;
             }
 
-            // Determine character form
-            $prevChar = ($i > 0) ? $chars[$i - 1]['char'] : null;
-            $nextChar = ($i < $length - 1) ? $chars[$i + 1]['char'] : null;
+            $prev = ($i > 0) ? $codePoints[$i - 1] : null;
+            $next = ($i < $count - 1) ? $codePoints[$i + 1] : null;
 
-            $form = $this->determineForm($char, $prevChar, $nextChar);
-            $reshapedChar = self::CHARACTER_FORMS[$char][$form];
+            // Determine connectivity
+            $connectToPrev = $this->canConnectToPrev($prev, $current);
+            $connectToNext = $this->canConnectToNext($current, $next);
 
-            $reshaped[] = $reshapedChar . $diacritics;
-        }
-
-        return implode('', $reshaped);
-    }
-
-    /**
-     * Handle Lam-Alef combinations
-     *
-     * @param string $text Input text
-     * @return string Text with Lam-Alef combinations replaced
-     */
-    private function handleLamAlef(string $text): string
-    {
-        foreach (self::LAM_ALEF_COMBINATIONS as $combination => $replacement) {
-            $text = str_replace($combination, $replacement, $text);
-        }
-        return $text;
-    }
-
-    /**
-     * Separate diacritics from base characters
-     *
-     * @param array $chars Array of characters
-     * @return array Array with 'char' and 'diacritics' keys
-     */
-    private function separateDiacritics(array $chars): array
-    {
-        $result = [];
-        $i = 0;
-
-        while ($i < count($chars)) {
-            $char = $chars[$i];
-            $diacritics = '';
-
-            // Collect following diacritics
-            $j = $i + 1;
-            while ($j < count($chars) && in_array($chars[$j], self::DIACRITICS, true)) {
-                $diacritics .= $chars[$j];
-                $j++;
+            // Select the appropriate form
+            if ($connectToPrev && $connectToNext) {
+                // Medial form
+                $form = $this->charsMap[$current][3];
+            } elseif ($connectToPrev) {
+                // Final form
+                $form = $this->charsMap[$current][1];
+            } elseif ($connectToNext) {
+                // Initial form
+                $form = $this->charsMap[$current][2];
+            } else {
+                // Isolated form
+                $form = $this->charsMap[$current][0];
             }
 
-            $result[] = [
-                'char' => $char,
-                'diacritics' => $diacritics
-            ];
+            $result[] = $form;
+        }
 
-            $i = $j;
+        // Convert the reshaped code points back to UTF-8 string
+        return $this->unicodeToUtf8($result);
+    }
+
+    /**
+     * Checks if the current character can connect to the previous character.
+     *
+     * @param int|null $prev The previous character code point.
+     * @param int $current The current character code point.
+     * @return bool
+     */
+    private function canConnectToPrev(?int $prev, int $current): bool
+    {
+        if ($prev === null) {
+            return false;
+        }
+
+        // Check if the previous character is a valid Persian letter
+        if (!isset($this->charsMap[$prev])) {
+            return false;
+        }
+
+        // Check if the previous character is a non-connector (like Alef, Re, etc.)
+        if (in_array($prev, $this->nonConnectors)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the current character can connect to the next character.
+     *
+     * @param int $current The current character code point.
+     * @param int|null $next The next character code point.
+     * @return bool
+     */
+    private function canConnectToNext(int $current, ?int $next): bool
+    {
+        if ($next === null) {
+            return false;
+        }
+
+        // Check if the next character is a valid Persian letter
+        if (!isset($this->charsMap[$next])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts a UTF-8 string to an array of Unicode code points.
+     *
+     * @param string $str
+     * @return array
+     */
+    private function utf8ToUnicode(string $str): array
+    {
+        $result = [];
+        $length = mb_strlen($str, 'UTF-8');
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = mb_substr($str, $i, 1, 'UTF-8');
+            $result[] = mb_ord($char, 'UTF-8');
         }
 
         return $result;
     }
 
     /**
-     * Determine the form of a character (isolated, final, initial, medial)
-     * Simplified and corrected logic:
-     * - Check if current character can connect to next (has initial form and next is valid)
-     * - Check if previous character can connect to current (prev has initial form and current has final form)
+     * Converts an array of Unicode code points back to a UTF-8 string.
      *
-     * @param string $char Current character
-     * @param string|null $prevChar Previous character
-     * @param string|null $nextChar Next character
-     * @return int Form index (0=isolated, 1=final, 2=initial, 3=medial)
+     * @param array $codePoints
+     * @return string
      */
-    private function determineForm(string $char, ?string $prevChar, ?string $nextChar): int
+    private function unicodeToUtf8(array $codePoints): string
     {
-        // Check if current character can connect forward (to next character)
-        // Current character must have initial form (index 2) and next character must be valid
-        $connectsAfter = $nextChar !== null && 
-                         isset(self::CHARACTER_FORMS[$char]) &&
-                         isset(self::CHARACTER_FORMS[$nextChar]) &&
-                         self::CHARACTER_FORMS[$char][2] !== ''; // Current char has initial form
+        $str = '';
 
-        // Check if previous character can connect forward (to current character)
-        // Previous character must have initial form (index 2) and current character must have final form (index 1)
-        $connectsBefore = $prevChar !== null && 
-                          isset(self::CHARACTER_FORMS[$prevChar]) &&
-                          isset(self::CHARACTER_FORMS[$char]) &&
-                          self::CHARACTER_FORMS[$prevChar][2] !== '' && // Previous char has initial form
-                          self::CHARACTER_FORMS[$char][1] !== ''; // Current char has final form
-
-        // Determine form based on connections
-        if ($connectsBefore && $connectsAfter) {
-            return 3; // Medial (connected from both sides)
-        } elseif ($connectsAfter) {
-            return 2; // Initial (connects to next)
-        } elseif ($connectsBefore) {
-            return 1; // Final (connected from previous)
-        } else {
-            return 0; // Isolated (no connections)
+        foreach ($codePoints as $cp) {
+            $str .= mb_chr($cp, 'UTF-8');
         }
+
+        return $str;
+    }
+
+    /**
+     * Initializes the character maps.
+     * Only Persian characters are included (no Arabic-specific characters).
+     */
+    private function initializeMaps(): void
+    {
+        // Format: [Isolated, Final, Initial, Medial]
+        // Values are decimal Unicode of Presentation Forms-B or A
+        $this->charsMap = [
+            // --- Standard Persian Letters ---
+            // Alef (0x0627) - Non-connector
+            0x0627 => [0xFE8D, 0xFE8E, 0xFE8D, 0xFE8E],
+            // Alef with Madda (0x0622) - Non-connector
+            0x0622 => [0xFE81, 0xFE82, 0xFE81, 0xFE82],
+            // Beh (0x0628)
+            0x0628 => [0xFE8F, 0xFE90, 0xFE91, 0xFE92],
+            // Peh (Persian) (0x067E)
+            0x067E => [0xFB56, 0xFB57, 0xFB58, 0xFB59],
+            // Teh (0x062A)
+            0x062A => [0xFE95, 0xFE96, 0xFE97, 0xFE98],
+            // Theh (0x062B)
+            0x062B => [0xFE99, 0xFE9A, 0xFE9B, 0xFE9C],
+            // Jeem (0x062C)
+            0x062C => [0xFE9D, 0xFE9E, 0xFE9F, 0xFEA0],
+            // Che (Persian) (0x0686)
+            0x0686 => [0xFB7A, 0xFB7B, 0xFB7C, 0xFB7D],
+            // Hah (0x062D)
+            0x062D => [0xFEA1, 0xFEA2, 0xFEA3, 0xFEA4],
+            // Khah (0x062E)
+            0x062E => [0xFEA5, 0xFEA6, 0xFEA7, 0xFEA8],
+            // Dal (0x062F) - Non-connector
+            0x062F => [0xFEA9, 0xFEAA, 0xFEA9, 0xFEAA],
+            // Thal (0x0630) - Non-connector
+            0x0630 => [0xFEAB, 0xFEAC, 0xFEAB, 0xFEAC],
+            // Reh (0x0631) - Non-connector
+            0x0631 => [0xFEAD, 0xFEAE, 0xFEAD, 0xFEAE],
+            // Zain (0x0632) - Non-connector
+            0x0632 => [0xFEAF, 0xFEB0, 0xFEAF, 0xFEB0],
+            // Zhe (Persian) (0x0698) - Non-connector
+            0x0698 => [0xFB8A, 0xFB8B, 0xFB8A, 0xFB8B],
+            // Seen (0x0633)
+            0x0633 => [0xFEB1, 0xFEB2, 0xFEB3, 0xFEB4],
+            // Sheen (0x0634)
+            0x0634 => [0xFEB5, 0xFEB6, 0xFEB7, 0xFEB8],
+            // Sad (0x0635)
+            0x0635 => [0xFEB9, 0xFEBA, 0xFEBB, 0xFEBC],
+            // Dad (0x0636)
+            0x0636 => [0xFEBD, 0xFEBE, 0xFEBF, 0xFEC0],
+            // Tah (0x0637)
+            0x0637 => [0xFEC1, 0xFEC2, 0xFEC3, 0xFEC4],
+            // Zah (0x0638)
+            0x0638 => [0xFEC5, 0xFEC6, 0xFEC7, 0xFEC8],
+            // Ain (0x0639)
+            0x0639 => [0xFEC9, 0xFECA, 0xFECB, 0xFECC],
+            // Ghain (0x063A)
+            0x063A => [0xFECD, 0xFECE, 0xFECF, 0xFED0],
+            // Feh (0x0641)
+            0x0641 => [0xFED1, 0xFED2, 0xFED3, 0xFED4],
+            // Qaf (0x0642)
+            0x0642 => [0xFED5, 0xFED6, 0xFED7, 0xFED8],
+            // Keheh (Persian Kaf) (0x06A9) - Critical for Persian text
+            0x06A9 => [0xFB8E, 0xFB8F, 0xFB90, 0xFB91],
+            // Gaf (Persian) (0x06AF)
+            0x06AF => [0xFB92, 0xFB93, 0xFB94, 0xFB95],
+            // Lam (0x0644)
+            0x0644 => [0xFEDD, 0xFEDE, 0xFEDF, 0xFEE0],
+            // Meem (0x0645)
+            // Forms: Isolated: FEE1, Final: FEE2, Initial: FEE3, Medial: FEE4
+            0x0645 => [0xFEE1, 0xFEE2, 0xFEE3, 0xFEE4],
+            // Noon (0x0646)
+            0x0646 => [0xFEE5, 0xFEE6, 0xFEE7, 0xFEE8],
+            // Vav (0x0648) - Non-connector
+            0x0648 => [0xFEE9, 0xFEEA, 0xFEE9, 0xFEEA],
+            // Heh (0x0647)
+            0x0647 => [0xFEEB, 0xFEEC, 0xFEED, 0xFEEE],
+            // -----------------------------------------------------------
+            // CRITICAL FIX: PERSIAN YE (U+06CC)
+            // -----------------------------------------------------------
+            // Farsi Yeh (0x06CC)
+            // Mapped to Presentation Forms-B which are dotless in final/isolated
+            // and have dots in initial/medial.
+            // Isolated: 0xFBFC, Final: 0xFBFD, Initial: 0xFBFE, Medial: 0xFBFF
+            0x06CC => [0xFBFC, 0xFBFD, 0xFBFE, 0xFBFF],
+            // Tatweel (Kashida) (0x0640) - Connects both sides
+            0x0640 => [0x0640, 0x0640, 0x0640, 0x0640],
+        ];
+
+        // List of characters that do NOT connect to the left (next character)
+        $this->nonConnectors = [
+            0x0627, // Alef
+            0x0622, // Alef Madda
+            0x062F, // Dal
+            0x0630, // Thal
+            0x0631, // Re
+            0x0632, // Zain
+            0x0698, // Zhe
+            0x0648, // Vav
+        ];
     }
 }
-
