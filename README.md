@@ -10,17 +10,17 @@
 
 ## 📖 About the Project
 
-**Abdal Phpian Render** is a comprehensive PHP package for fixing and improving the display of Persian and Arabic texts in graphical environments. This package solves common text display issues in libraries such as GD Library, FPDF, and TCPDF, providing full Right-to-Left (RTL) support.
+**Abdal Phpian Render** is a comprehensive PHP package for fixing and improving the display of Persian texts in graphical environments. This package solves common text display issues in libraries such as GD Library, FPDF, and TCPDF, providing full Right-to-Left (RTL) support.
 
 ### 🎯 Why This Software Was Created?
 
-When working with Persian and Arabic texts in PHP graphical environments, several problems arise:
+When working with Persian texts in PHP graphical environments, several problems arise:
 
-- **Character Display Issues**: Persian/Arabic letters are displayed separately without proper connection
+- **Character Display Issues**: Persian letters are displayed separately without proper connection
 - **Display Order Problems**: In mixed texts (Persian + English), word order is not displayed correctly
 - **Number Issues**: English numbers appear in Persian text
 - **Punctuation Problems**: Parentheses, brackets, and other marks are displayed in the wrong direction
-- **Loss of Diacritics**: Arabic diacritics are lost during processing
+- **Loss of Diacritics**: Persian diacritics are lost during processing
 
 This package solves all these problems and provides a complete and standard solution for rendering RTL texts.
 
@@ -30,7 +30,7 @@ This package solves all these problems and provides a complete and standard solu
 
 - ✅ Convert characters to four forms (isolated, final, initial, medial)
 - ✅ Full support for Persian-specific characters (پ, چ, گ, ژ)
-- ✅ Support for special Arabic combinations (لا, لآ, لأ, لإ)
+- ✅ Support for Persian Lam-Alef combinations (لا, لآ)
 - ✅ Preserve diacritics during reshaping
 
 ### 🔄 BiDi (Bidirectional) Algorithm
@@ -42,8 +42,7 @@ This package solves all these problems and provides a complete and standard solu
 ### 🔢 Number Converter
 
 - ✅ Convert English numbers to Persian
-- ✅ Convert English numbers to Arabic
-- ✅ Automatic conversion of Persian/Arabic numbers to English (for calculations)
+- ✅ Automatic conversion of Persian numbers to English (for calculations)
 
 ### 🔣 Diacritics Handler
 
@@ -80,7 +79,7 @@ Or add to `composer.json`:
 ```json
 {
     "require": {
-        "abdal/phpian-render": "^1.3"
+        "abdal/phpian-render": "^1.4"
     }
 }
 ```
@@ -121,7 +120,7 @@ $processed = $renderer->process($text, [
     'reshape' => true,              // Enable reshaping
     'bidi' => true,                  // Enable bidirectional
     'convertNumbers' => true,        // Convert numbers
-    'numberLocale' => 'persian',     // 'persian' or 'arabic'
+    'numberLocale' => 'persian',     // Only 'persian' is supported
     'preserveDiacritics' => true,    // Preserve diacritics
     'clean' => false,                // Clean invisible characters
 ]);
@@ -156,10 +155,6 @@ $renderer = new PhpianRender();
 $text = 'عدد 123 است';
 $persian = $renderer->convertNumbers($text, 'persian');
 echo $persian; // Output: عدد ۱۲۳ است
-
-// Convert to Arabic
-$arabic = $renderer->convertNumbers($text, 'arabic');
-echo $arabic; // Output: عدد ١٢٣ است
 ```
 
 ### BiDi Processing for Mixed Texts
@@ -236,7 +231,7 @@ $processed = PhpianRender::processStatic($text, [
     'reshape' => true,              // Enable reshaping
     'bidi' => true,                  // Enable bidirectional
     'convertNumbers' => true,        // Convert numbers
-    'numberLocale' => 'persian',     // 'persian' or 'arabic'
+    'numberLocale' => 'persian',     // Only 'persian' is supported
     'preserveDiacritics' => true,    // Preserve diacritics
     'clean' => false,                // Clean invisible characters
     'reverse' => true,               // Reverse text for RTL display

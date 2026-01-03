@@ -58,7 +58,7 @@ class Reshaper
         "\u{063A}" => ["\u{FECD}", "\u{FECE}", "\u{FECF}", "\u{FED0}"], // غ
         "\u{0641}" => ["\u{FED1}", "\u{FED2}", "\u{FED3}", "\u{FED4}"], // ف
         "\u{0642}" => ["\u{FED5}", "\u{FED6}", "\u{FED7}", "\u{FED8}"], // ق
-        "\u{06A9}" => ["\u{FED9}", "\u{FEDA}", "\u{FEDB}", "\u{FEDC}"], // ک (Persian Kaf)
+        "\u{06A9}" => ["\u{FB8E}", "\u{FB8F}", "\u{FB90}", "\u{FB91}"], // ک (Persian Kaf)
         "\u{0644}" => ["\u{FEDD}", "\u{FEDE}", "\u{FEDF}", "\u{FEE0}"], // ل
         "\u{0645}" => ["\u{FEE1}", "\u{FEE2}", "\u{FEE3}", "\u{FEE4}"], // م
         "\u{0646}" => ["\u{FEE5}", "\u{FEE6}", "\u{FEE7}", "\u{FEE8}"], // ن
@@ -74,9 +74,9 @@ class Reshaper
         // Persian Yeh (ی)
         // Format: [isolated, final, initial, medial]
         // U+06CC: Persian Yeh (ی)
-        // Based on PersianRender.php: 'ی' => ['ی', 'ی', 'ی'] which means all forms are filled
-        // All forms are filled to allow proper connection to other characters
-        "\u{06CC}" => ["\u{06CC}", "\u{06CC}", "\u{06CC}", "\u{06CC}"], // ی (Persian Yeh) - all forms filled for connection
+        // Correct Unicode Presentation Forms-B for Persian Yeh:
+        // Isolated: FBFC, Final: FBFD, Initial: FBFE, Medial: FBFF
+        "\u{06CC}" => ["\u{FBFC}", "\u{FBFD}", "\u{FBFE}", "\u{FBFF}"], // ی (Persian Yeh)
     ];
 
     /**
@@ -208,10 +208,9 @@ class Reshaper
 
     /**
      * Determine the form of a character (isolated, final, initial, medial)
-     * Based on correct logic similar to PersianRender.php:
-     * - Check if previous character can connect forward (has initial form)
-     * - Check if current character can connect forward (has initial form)
-     * - Check if next character can connect backward (has final form)
+     * Simplified and corrected logic:
+     * - Check if current character can connect to next (has initial form and next is valid)
+     * - Check if previous character can connect to current (prev has initial form and current has final form)
      *
      * @param string $char Current character
      * @param string|null $prevChar Previous character
@@ -220,39 +219,27 @@ class Reshaper
      */
     private function determineForm(string $char, ?string $prevChar, ?string $nextChar): int
     {
-        $result = 0;
-
-        // Based on PersianRender.php logic:
         // Check if current character can connect forward (to next character)
-        // Current character must have initial form (index 2) and next character must have final form (index 1)
-        // In PersianRender: checks if char[2] exists and next[0] exists
-        // In our format [isolated, final, initial, medial]: checks if char[2] exists and next[1] exists
-        if ($nextChar !== null && 
-            isset(self::CHARACTER_FORMS[$char]) &&
-            isset(self::CHARACTER_FORMS[$nextChar]) &&
-            self::CHARACTER_FORMS[$char][2] !== '' && // Current char has initial form (not empty)
-            self::CHARACTER_FORMS[$nextChar][1] !== '') { // Next char has final form (not empty)
-            $result += 4; // Can connect forward (initial)
-        }
+        // Current character must have initial form (index 2) and next character must be valid
+        $connectsAfter = $nextChar !== null && 
+                         isset(self::CHARACTER_FORMS[$char]) &&
+                         isset(self::CHARACTER_FORMS[$nextChar]) &&
+                         self::CHARACTER_FORMS[$char][2] !== ''; // Current char has initial form
 
         // Check if previous character can connect forward (to current character)
         // Previous character must have initial form (index 2) and current character must have final form (index 1)
-        // In PersianRender: checks if char[0] exists and prev[2] exists
-        // In our format: checks if char[1] exists and prev[2] exists
-        if ($prevChar !== null && 
-            isset(self::CHARACTER_FORMS[$prevChar]) &&
-            isset(self::CHARACTER_FORMS[$char]) &&
-            self::CHARACTER_FORMS[$prevChar][2] !== '' && // Previous char has initial form (not empty)
-            self::CHARACTER_FORMS[$char][1] !== '') { // Current char has final form (not empty)
-            $result += 2; // Can connect from previous (final)
-        }
+        $connectsBefore = $prevChar !== null && 
+                          isset(self::CHARACTER_FORMS[$prevChar]) &&
+                          isset(self::CHARACTER_FORMS[$char]) &&
+                          self::CHARACTER_FORMS[$prevChar][2] !== '' && // Previous char has initial form
+                          self::CHARACTER_FORMS[$char][1] !== ''; // Current char has final form
 
-        // Determine form based on result
-        if ($result === 6) {
+        // Determine form based on connections
+        if ($connectsBefore && $connectsAfter) {
             return 3; // Medial (connected from both sides)
-        } elseif ($result === 4) {
+        } elseif ($connectsAfter) {
             return 2; // Initial (connects to next)
-        } elseif ($result === 2) {
+        } elseif ($connectsBefore) {
             return 1; // Final (connected from previous)
         } else {
             return 0; // Isolated (no connections)
