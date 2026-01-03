@@ -84,9 +84,9 @@ echo "Fully Processed: $processed\n\n";
 echo "=== Example 8: Static Method Calls ===\n";
 $text = 'سلام دنیا';
 
-// Using static methods directly
+// Using static methods directly (simple usage)
 $processed = PhpianRender::processStatic($text);
-echo "Static Process: $processed\n";
+echo "Static Process (Simple): $processed\n";
 
 $reshaped = PhpianRender::reshapeStatic($text);
 echo "Static Reshape: $reshaped\n";
@@ -96,6 +96,23 @@ echo "Static IsRTL: $isRTL\n";
 
 $converted = PhpianRender::convertNumbersStatic('عدد 123', 'persian');
 echo "Static Convert: $converted\n\n";
+
+// Example 8b: Static method with full options
+echo "=== Example 8b: Static Method with Full Options ===\n";
+$text = 'عدد 123 در متن فارسی است';
+
+// Full processing with all options using static method
+$processed = PhpianRender::processStatic($text, [
+    'reshape' => true,              // Enable reshaping
+    'bidi' => true,                  // Enable bidirectional
+    'convertNumbers' => true,        // Convert numbers
+    'numberLocale' => 'persian',     // 'persian' or 'arabic'
+    'preserveDiacritics' => true,    // Preserve diacritics
+    'clean' => false,                // Clean invisible characters
+    'reverse' => true,               // Reverse text for RTL display
+]);
+echo "Original: $text\n";
+echo "Fully Processed (Static): $processed\n\n";
 
 // Example 9: Get version
 echo "=== Example 9: Get Version ===\n";

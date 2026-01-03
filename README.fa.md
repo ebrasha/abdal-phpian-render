@@ -80,7 +80,7 @@ composer require abdal/phpian-render
 ```json
 {
     "require": {
-        "abdal/phpian-render": "^1.1"
+        "abdal/phpian-render": "^1.3"
     }
 }
 ```
@@ -226,12 +226,22 @@ use Abdal\PhpianRender\PhpianRender;
 // استفاده از متدهای static بدون نیاز به ایجاد نمونه
 $text = 'سلام دنیا';
 
-// پردازش کامل
+// پردازش ساده
+$processed = PhpianRender::processStatic($text);
+echo $processed;
+
+// پردازش کامل با تمام گزینه‌ها
+$text = 'عدد 123 در متن فارسی است';
 $processed = PhpianRender::processStatic($text, [
-    'reshape' => true,
-    'bidi' => true,
-    'convertNumbers' => true,
+    'reshape' => true,              // فعال‌سازی reshaping
+    'bidi' => true,                  // فعال‌سازی bidirectional
+    'convertNumbers' => true,        // تبدیل اعداد
+    'numberLocale' => 'persian',     // 'persian' یا 'arabic'
+    'preserveDiacritics' => true,    // حفظ اعراب
+    'clean' => false,                // پاکسازی کاراکترهای نامرئی
+    'reverse' => true,               // معکوس کردن متن برای نمایش RTL
 ]);
+echo $processed; // خروجی: عدد ۱۲۳ در متن فارسی است
 
 // Reshape
 $reshaped = PhpianRender::reshapeStatic($text);

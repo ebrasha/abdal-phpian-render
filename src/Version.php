@@ -31,7 +31,7 @@ class Version
      * MINOR: New features (backward compatible)
      * PATCH: Bug fixes
      */
-    public const VERSION = '1.2.0';
+    public const VERSION = '1.3.0';
 
     /**
      * Get current version

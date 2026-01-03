@@ -163,5 +163,39 @@ class PhpianRenderTest extends TestCase
         $staticResult = PhpianRender::isRTLStatic($text);
         $this->assertEquals($instanceResult, $staticResult);
     }
+
+    public function testProcessStaticWithFullOptions(): void
+    {
+        $text = 'عدد 123 در متن فارسی';
+        
+        $options = [
+            'reshape' => true,
+            'bidi' => true,
+            'convertNumbers' => true,
+            'numberLocale' => 'persian',
+            'preserveDiacritics' => true,
+            'clean' => false,
+            'reverse' => true,
+        ];
+        
+        $result = PhpianRender::processStatic($text, $options);
+        $this->assertNotEmpty($result);
+        
+        // Should contain Persian numbers
+        $this->assertStringContainsString('۱۲۳', $result);
+    }
+
+    public function testProcessStaticWithCustomOptions(): void
+    {
+        $text = 'سلام Hello';
+        
+        // Test with only reshape
+        $result1 = PhpianRender::processStatic($text, ['reshape' => true, 'bidi' => false]);
+        $this->assertNotEmpty($result1);
+        
+        // Test with only number conversion
+        $result2 = PhpianRender::processStatic('عدد 123', ['reshape' => false, 'convertNumbers' => true]);
+        $this->assertStringContainsString('۱۲۳', $result2);
+    }
 }
 
