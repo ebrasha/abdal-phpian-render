@@ -91,5 +91,18 @@ class ReshaperTest extends TestCase
         $result = $this->reshaper->reshape($text);
         $this->assertEquals($text, $result);
     }
+
+    public function testReshapePersianYeh(): void
+    {
+        // Test Persian Yeh (ی) reshaping - this was a bug fix
+        $text = 'الینا شامی زنجانی';
+        $result = $this->reshaper->reshape($text);
+        $this->assertNotEmpty($result);
+        // Should not contain Lam-Alef combinations incorrectly
+        $this->assertStringNotContainsString("\u{FEF5}", $result);
+        $this->assertStringNotContainsString("\u{FEF6}", $result);
+        $this->assertStringNotContainsString("\u{FEF7}", $result);
+        $this->assertStringNotContainsString("\u{FEF8}", $result);
+    }
 }
 

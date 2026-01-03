@@ -70,8 +70,9 @@ class Reshaper
         "\u{06AF}" => ["\u{FB92}", "\u{FB93}", "\u{FB94}", "\u{FB95}"], // گ
         "\u{0698}" => ["\u{FB8A}", "\u{FB8B}", "\u{FB8A}", "\u{FB8B}"], // ژ
         
-        // Yeh variations
-        "\u{06CC}" => ["\u{FEF5}", "\u{FEF6}", "\u{FEF7}", "\u{FEF8}"], // ی (Persian Yeh)
+        // Yeh variations (Persian Yeh)
+        // Format: [isolated, final, initial, medial]
+        "\u{06CC}" => ["\u{FBFC}", "\u{FBFC}", "\u{FBFD}", "\u{FBFE}"], // ی (Persian Yeh)
     ];
 
     /**

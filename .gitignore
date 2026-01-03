@@ -12,6 +12,8 @@ composer.lock
 *.swp
 *.swo
 *~
+.gitignore
+.editorconfig
 
 # OS
 .DS_Store
