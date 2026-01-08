@@ -1,6 +1,6 @@
 # 📦 Abdal Phpian Render
 
-[English](README.md) | [فارسی](README.fa.md)
+[English](README.en.md) | [فارسی](README.md)
 
 <div dir="rtl" align="right">
 
@@ -8,73 +8,73 @@
 
 </div>
 
-## 📖 About the Project
+## 📖 درباره پروژه
 
-**Abdal Phpian Render** is a comprehensive PHP package for fixing and improving the display of Persian texts in graphical environments. This package solves common text display issues in libraries such as GD Library, FPDF, and TCPDF, providing full Right-to-Left (RTL) support.
+**Abdal Phpian Render** یک پکیج جامع PHP برای اصلاح و بهبود نمایش متون فارسی در محیط‌های گرافیکی است. این پکیج مشکلات رایج نمایش متن در کتابخانه‌هایی مانند GD Library، FPDF و TCPDF را حل می‌کند و پشتیبانی کامل از راست‌به‌چپ (RTL) را فراهم می‌آورد.
 
-### 🎯 Why This Software Was Created?
+### 🎯 چرا این نرم‌افزار ساخته شد؟
 
-When working with Persian texts in PHP graphical environments, several problems arise:
+هنگام کار با متون فارسی در محیط‌های گرافیکی PHP، مشکلات متعددی وجود دارد:
 
-- **Character Display Issues**: Persian letters are displayed separately without proper connection
-- **Display Order Problems**: In mixed texts (Persian + English), word order is not displayed correctly
-- **Number Issues**: English numbers appear in Persian text
-- **Punctuation Problems**: Parentheses, brackets, and other marks are displayed in the wrong direction
-- **Loss of Diacritics**: Persian diacritics are lost during processing
+- **مشکل نمایش حروف**: حروف فارسی به صورت جداگانه و بدون اتصال نمایش داده می‌شوند
+- **مشکل ترتیب نمایش**: در متون ترکیبی (فارسی + انگلیسی) ترتیب کلمات به درستی نمایش داده نمی‌شود
+- **مشکل اعداد**: اعداد انگلیسی در متن فارسی ظاهر می‌شوند
+- **مشکل علائم نگارشی**: پرانتز، براکت و سایر علائم در جهت اشتباه نمایش داده می‌شوند
+- **از دست رفتن اعراب**: اعراب فارسی در فرآیند پردازش از بین می‌روند
 
-This package solves all these problems and provides a complete and standard solution for rendering RTL texts.
+این پکیج تمام این مشکلات را حل می‌کند و یک راه‌حل کامل و استاندارد برای رندر متون RTL ارائه می‌دهد.
 
-## ✨ Features and Capabilities
+## ✨ ویژگی‌ها و قابلیت‌ها
 
-### 🔤 Reshaping Algorithm
+### 🔤 الگوریتم Reshaping
 
-- ✅ Convert characters to four forms (isolated, final, initial, medial)
-- ✅ Full support for Persian-specific characters (پ, چ, گ, ژ)
-- ✅ Support for Persian Lam-Alef combinations (لا, لآ)
-- ✅ Preserve diacritics during reshaping
+- ✅ تبدیل حروف به اشکال چهارگانه (isolated, final, initial, medial)
+- ✅ پشتیبانی کامل از حروف اختصاصی فارسی (پ، چ، گ، ژ)
+- ✅ پشتیبانی از ترکیبات Lam-Alef فارسی (لا، لآ)
+- ✅ حفظ اعراب در فرآیند reshaping
 
-### 🔄 BiDi (Bidirectional) Algorithm
+### 🔄 الگوریتم BiDi (Bidirectional)
 
-- ✅ Automatic detection of display order in mixed texts (Persian + English)
-- ✅ Automatic mirroring of punctuation marks (parentheses, brackets, braces, etc.)
-- ✅ Smart management of neutral marks based on context
+- ✅ تشخیص خودکار ترتیب نمایش در متون ترکیبی (فارسی + انگلیسی)
+- ✅ آینه‌سازی خودکار علائم نگارشی (پرانتز، براکت، آکولاد و...)
+- ✅ مدیریت هوشمند علائم خنثی بر اساس context
 
-### 🔢 Number Converter
+### 🔢 تبدیل اعداد (Number Converter)
 
-- ✅ Convert English numbers to Persian
-- ✅ Automatic conversion of Persian numbers to English (for calculations)
+- ✅ تبدیل اعداد انگلیسی به فارسی
+- ✅ تبدیل خودکار اعداد فارسی به انگلیسی (برای محاسبات)
 
-### 🔣 Diacritics Handler
+### 🔣 مدیریت اعراب (Diacritics Handler)
 
-- ✅ Extract and preserve diacritics (fatha, damma, kasra, tanween, etc.)
-- ✅ Reapply diacritics after reshaping
-- ✅ Prevent loss of diacritics during processing
+- ✅ استخراج و حفظ اعراب (فَتحه، ضَمّه، کَسره، تنوین و...)
+- ✅ اعمال مجدد اعراب پس از reshaping
+- ✅ جلوگیری از از دست رفتن اعراب در فرآیند پردازش
 
-### 🛠️ Helper Functions
+### 🛠️ توابع کمکی (Helper Functions)
 
-- ✅ `wordWrap()`: Line breaking specifically for RTL texts (prevents incomplete word breaks)
-- ✅ `isRTL()`: Automatic detection of input text language
-- ✅ `reverse()`: Reverse text
-- ✅ `clean()`: Clean invisible and unwanted characters
+- ✅ `wordWrap()`: شکستن خط مخصوص متون RTL (جلوگیری از شکسته شدن ناقص کلمات)
+- ✅ `isRTL()`: تشخیص خودکار زبان متن ورودی
+- ✅ `reverse()`: معکوس کردن متن
+- ✅ `clean()`: پاکسازی از کاراکترهای نامرئی و ناخواسته
 
-### 📋 Standards Followed
+### 📋 استانداردهای رعایت شده
 
-- ✅ **PSR-12**: Full compliance with PHP coding standards
-- ✅ **Type Hinting**: Complete use of type hints for data type safety
-- ✅ **PHP 8.1+**: Full compatibility with newer PHP versions
-- ✅ **Lightweight**: Light dependencies (only `symfony/polyfill-mbstring`)
-- ✅ **Unit Tests**: Complete tests with PHPUnit
-- ✅ **Clean Code**: Clean and maintainable code
+- ✅ **PSR-12**: رعایت کامل استانداردهای کدنویسی PHP
+- ✅ **Type Hinting**: استفاده کامل از type hints برای امنیت نوع داده
+- ✅ **PHP 8.1+**: سازگاری کامل با نسخه‌های جدید PHP
+- ✅ **Lightweight**: وابستگی سبک (فقط `symfony/polyfill-mbstring`)
+- ✅ **Unit Tests**: تست‌های کامل با PHPUnit
+- ✅ **Clean Code**: کد تمیز و قابل نگهداری
 
-## 🚀 Installation and Setup
+## 🚀 نصب و راه‌اندازی
 
-### Install via Composer
+### نصب از طریق Composer
 
 ```bash
 composer require abdal/phpian-render
 ```
 
-Or add to `composer.json`:
+یا اضافه کردن به `composer.json`:
 
 ```json
 {
@@ -84,9 +84,9 @@ Or add to `composer.json`:
 }
 ```
 
-## 📚 Usage
+## 📚 نحوه استفاده
 
-### Basic Usage
+### استفاده پایه
 
 ```php
 <?php
@@ -95,16 +95,16 @@ require_once 'vendor/autoload.php';
 
 use Abdal\PhpianRender\PhpianRender;
 
-// Create an instance of the main class
+// ایجاد نمونه از کلاس اصلی
 $renderer = new PhpianRender();
 
-// Simple text processing
+// پردازش ساده متن
 $text = 'سلام دنیا';
 $processed = $renderer->process($text);
 echo $processed;
 ```
 
-### Full Processing with Options
+### پردازش کامل با گزینه‌ها
 
 ```php
 <?php
@@ -115,20 +115,20 @@ $renderer = new PhpianRender();
 
 $text = 'عدد 123 در متن فارسی است';
 
-// Full processing with all features
+// پردازش کامل با تمام ویژگی‌ها
 $processed = $renderer->process($text, [
-    'reshape' => true,              // Enable reshaping
-    'bidi' => true,                  // Enable bidirectional
-    'convertNumbers' => true,        // Convert numbers
-    'numberLocale' => 'persian',     // Only 'persian' is supported
-    'preserveDiacritics' => true,    // Preserve diacritics
-    'clean' => false,                // Clean invisible characters
+    'reshape' => true,              // فعال‌سازی reshaping
+    'bidi' => true,                  // فعال‌سازی bidirectional
+    'convertNumbers' => true,        // تبدیل اعداد
+    'numberLocale' => 'persian',     // فقط 'persian' پشتیبانی می‌شود
+    'preserveDiacritics' => true,    // حفظ اعراب
+    'clean' => false,                // پاکسازی کاراکترهای نامرئی
 ]);
 
-echo $processed; // Output: عدد ۱۲۳ در متن فارسی است
+echo $processed; // خروجی: عدد ۱۲۳ در متن فارسی است
 ```
 
-### Using Reshaping Alone
+### استفاده از Reshaping به تنهایی
 
 ```php
 <?php
@@ -139,10 +139,10 @@ $renderer = new PhpianRender();
 
 $text = 'سلام';
 $reshaped = $renderer->reshape($text);
-echo $reshaped; // Characters are displayed connected
+echo $reshaped; // حروف به صورت متصل نمایش داده می‌شوند
 ```
 
-### Number Conversion
+### تبدیل اعداد
 
 ```php
 <?php
@@ -151,13 +151,13 @@ use Abdal\PhpianRender\PhpianRender;
 
 $renderer = new PhpianRender();
 
-// Convert to Persian
+// تبدیل به فارسی
 $text = 'عدد 123 است';
 $persian = $renderer->convertNumbers($text, 'persian');
-echo $persian; // Output: عدد ۱۲۳ است
+echo $persian; // خروجی: عدد ۱۲۳ است
 ```
 
-### BiDi Processing for Mixed Texts
+### پردازش BiDi برای متون ترکیبی
 
 ```php
 <?php
@@ -168,10 +168,10 @@ $renderer = new PhpianRender();
 
 $text = 'سلام Hello World';
 $bidi = $renderer->processBiDi($text);
-echo $bidi; // Display order is correctly fixed
+echo $bidi; // ترتیب نمایش به درستی اصلاح می‌شود
 ```
 
-### Word Wrap for RTL
+### شکستن خط (Word Wrap) برای RTL
 
 ```php
 <?php
@@ -181,16 +181,16 @@ use Abdal\PhpianRender\PhpianRender;
 $renderer = new PhpianRender();
 
 $text = 'این یک متن طولانی است که باید به چند خط تقسیم شود';
-$wrapped = $renderer->wordWrap($text, 20); // Maximum 20 characters per line
+$wrapped = $renderer->wordWrap($text, 20); // حداکثر 20 کاراکتر در هر خط
 
 echo $wrapped;
-// Output:
+// خروجی:
 // این یک متن طولانی است
 // که باید به چند خط
 // تقسیم شود
 ```
 
-### RTL Detection
+### تشخیص RTL
 
 ```php
 <?php
@@ -203,59 +203,59 @@ $text1 = 'سلام';
 $text2 = 'Hello';
 
 if ($renderer->isRTL($text1)) {
-    echo 'Text is RTL';
+    echo 'متن RTL است';
 }
 
 if (!$renderer->isRTL($text2)) {
-    echo 'Text is LTR';
+    echo 'متن LTR است';
 }
 ```
 
-### Using Static Methods (No Instance Required)
+### استفاده از Static Methods (بدون نیاز به ایجاد نمونه)
 
 ```php
 <?php
 
 use Abdal\PhpianRender\PhpianRender;
 
-// Use static methods without creating an instance
+// استفاده از متدهای static بدون نیاز به ایجاد نمونه
 $text = 'سلام دنیا';
 
-// Simple processing
+// پردازش ساده
 $processed = PhpianRender::processStatic($text);
 echo $processed;
 
-// Full processing with all options
+// پردازش کامل با تمام گزینه‌ها
 $text = 'عدد 123 در متن فارسی است';
 $processed = PhpianRender::processStatic($text, [
-    'reshape' => true,              // Enable reshaping
-    'bidi' => true,                  // Enable bidirectional
-    'convertNumbers' => true,        // Convert numbers
-    'numberLocale' => 'persian',     // Only 'persian' is supported
-    'preserveDiacritics' => true,    // Preserve diacritics
-    'clean' => false,                // Clean invisible characters
-    'reverse' => true,               // Reverse text for RTL display
+    'reshape' => true,              // فعال‌سازی reshaping
+    'bidi' => true,                  // فعال‌سازی bidirectional
+    'convertNumbers' => true,        // تبدیل اعداد
+    'numberLocale' => 'persian',     // فقط 'persian' پشتیبانی می‌شود
+    'preserveDiacritics' => true,    // حفظ اعراب
+    'clean' => false,                // پاکسازی کاراکترهای نامرئی
+    'reverse' => true,               // معکوس کردن متن برای نمایش RTL
 ]);
-echo $processed; // Output: عدد ۱۲۳ در متن فارسی است
+echo $processed; // خروجی: عدد ۱۲۳ در متن فارسی است
 
 // Reshape
 $reshaped = PhpianRender::reshapeStatic($text);
 
-// Convert numbers
+// تبدیل اعداد
 $converted = PhpianRender::convertNumbersStatic('عدد 123', 'persian');
 
-// RTL detection
+// تشخیص RTL
 $isRTL = PhpianRender::isRTLStatic($text);
 
-// Word wrap
+// Word Wrap
 $wrapped = PhpianRender::wordWrapStatic('متن طولانی', 20);
 
-// Get package version
+// دریافت نسخه پکیج
 $version = PhpianRender::getVersion();
 echo "Version: $version";
 ```
 
-### Using Standalone Classes
+### استفاده از کلاس‌های مستقل
 
 ```php
 <?php
@@ -265,25 +265,25 @@ use Abdal\PhpianRender\BiDi;
 use Abdal\PhpianRender\NumberConverter;
 use Abdal\PhpianRender\Helper;
 
-// Direct use of Reshaper
+// استفاده مستقیم از Reshaper
 $reshaper = new Reshaper();
 $reshaped = $reshaper->reshape('سلام');
 
-// Direct use of BiDi
+// استفاده مستقیم از BiDi
 $bidi = new BiDi();
 $processed = $bidi->process('سلام Hello');
 
-// Direct use of NumberConverter
+// استفاده مستقیم از NumberConverter
 $converter = new NumberConverter();
 $persian = $converter->toPersian('123');
 
-// Direct use of Helper
+// استفاده مستقیم از Helper
 $helper = new Helper();
 $isRTL = $helper->isRTL('سلام');
 $wrapped = $helper->wordWrap('متن طولانی', 10);
 ```
 
-### Usage in GD Library
+### استفاده در GD Library
 
 ```php
 <?php
@@ -292,7 +292,7 @@ use Abdal\PhpianRender\PhpianRender;
 
 $renderer = new PhpianRender();
 
-// Process text before displaying in image
+// پردازش متن قبل از نمایش در تصویر
 $text = 'سلام دنیا';
 $processed = $renderer->process($text, [
     'reshape' => true,
@@ -300,12 +300,12 @@ $processed = $renderer->process($text, [
     'convertNumbers' => true,
 ]);
 
-// Use in GD
+// استفاده در GD
 $image = imagecreate(400, 200);
 $bg = imagecolorallocate($image, 255, 255, 255);
 $textColor = imagecolorallocate($image, 0, 0, 0);
 
-// Use Persian font
+// استفاده از فونت فارسی
 imagettftext($image, 20, 0, 10, 50, $textColor, 'font.ttf', $processed);
 
 header('Content-Type: image/png');
@@ -313,13 +313,13 @@ imagepng($image);
 imagedestroy($image);
 ```
 
-### Usage in FPDF/TCPDF
+### استفاده در FPDF/TCPDF
 
 ```php
 <?php
 
 use Abdal\PhpianRender\PhpianRender;
-require_once('fpdf.php'); // or tcpdf.php
+require_once('fpdf.php'); // یا tcpdf.php
 
 $renderer = new PhpianRender();
 $pdf = new FPDF();
@@ -340,43 +340,43 @@ $pdf->Cell(0, 10, $processed, 0, 1);
 $pdf->Output();
 ```
 
-## 🧪 Tests
+## 🧪 تست‌ها
 
-To run unit tests:
+برای اجرای تست‌های واحد:
 
 ```bash
 composer install
 vendor/bin/phpunit
 ```
 
-## 📦 Dependencies
+## 📦 وابستگی‌ها
 
 - PHP >= 8.1
 - symfony/polyfill-mbstring ^1.28
 
-## 📄 License
+## 📄 مجوز
 
-This project is licensed under the GPL-2.0-or-later License.
+این پروژه تحت مجوز GPL-2.0-or-later منتشر شده است.
 
-## 🐛 Reporting Issues
+## 🐛 گزارش مشکلات
 
-If you encounter any issues or have configuration problems, please reach out via email at Prof.Shafiei@Gmail.com. You can also report issues on GitLab or GitHub.
+اگر با مشکلی مواجه شدید یا در پیکربندی مشکل دارید، لطفاً از طریق ایمیل Prof.Shafiei@Gmail.com با ما در تماس باشید. همچنین می‌توانید مشکلات را در GitLab یا GitHub گزارش دهید.
 
-## ❤️ Donation
+## ❤️ حمایت مالی
 
-If you find this project helpful and would like to support further development, please consider making a donation:
-- [Donate Here](https://alphajet.ir/abdal-donation)
+اگر این پروژه برای شما مفید بود و مایل به حمایت از توسعه بیشتر هستید، لطفاً در نظر داشته باشید که کمک مالی کنید:
+- [اینجا اهدا کنید](https://alphajet.ir/abdal-donation)
 
-## 🤵 Programmer
+## 🤵 برنامه‌نویس
 
-Handcrafted with Passion by **Ebrahim Shafiei (EbraSha)**
-- **E-Mail**: Prof.Shafiei@Gmail.com
-- **Telegram**: [@ProfShafiei](https://t.me/ProfShafiei)
+ساخته شده با عشق توسط **ابراهیم شفیعی (EbraSha)**
+- **ایمیل**: Prof.Shafiei@Gmail.com
+- **تلگرام**: [@ProfShafiei](https://t.me/ProfShafiei)
 - **GitHub**: [@ebrasha](https://github.com/ebrasha)
 - **Twitter/X**: [@ProfShafiei](https://x.com/ProfShafiei)
 - **LinkedIn**: [ProfShafiei](https://www.linkedin.com/in/profshafiei/)
 
-## 📜 License
+## 📜 مجوز
 
-This project is licensed under the GPLv2 or later License.
+این پروژه تحت مجوز GPLv2 or later منتشر شده است.
 
