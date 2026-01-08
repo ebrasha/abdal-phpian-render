@@ -2,7 +2,7 @@
 
 [English](README.en.md) | [فارسی](README.md)
 
-<div dir="rtl" align="right">
+<div dir="rtl" align="center">
 
 ![Abdal Phpian Render](shot.png)
 
