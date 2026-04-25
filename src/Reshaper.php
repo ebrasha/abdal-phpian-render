@@ -38,14 +38,16 @@ class Reshaper
         // Alef variations (used in Persian)
         "\u{0622}" => ["\u{FE81}", "\u{FE82}", "", ""], // آ - final only, no initial/medial
         "\u{0627}" => ["\u{FE8D}", "\u{FE8E}", "", ""], // ا - final only, no initial/medial (doesn't connect forward)
-        
+
         // Common Persian characters
         "\u{0628}" => ["\u{FE8F}", "\u{FE90}", "\u{FE91}", "\u{FE92}"], // ب
         "\u{062A}" => ["\u{FE95}", "\u{FE96}", "\u{FE97}", "\u{FE98}"], // ت
+        "\u{062B}" => ["\u{FE99}", "\u{FE9A}", "\u{FE9B}", "\u{FE9C}"], // ث -
         "\u{062C}" => ["\u{FE9D}", "\u{FE9E}", "\u{FE9F}", "\u{FEA0}"], // ج
         "\u{062D}" => ["\u{FEA1}", "\u{FEA2}", "\u{FEA3}", "\u{FEA4}"], // ح
         "\u{062E}" => ["\u{FEA5}", "\u{FEA6}", "\u{FEA7}", "\u{FEA8}"], // خ
         "\u{062F}" => ["\u{FEA9}", "\u{FEAA}", "", ""], // د - final only, no initial/medial
+        "\u{0630}" => ["\u{FEAB}", "\u{FEAC}", "", ""], // ذ
         "\u{0631}" => ["\u{FEAD}", "\u{FEAE}", "", ""], // ر - final only, no initial/medial
         "\u{0632}" => ["\u{FEAF}", "\u{FEB0}", "", ""], // ز - final only, no initial/medial
         "\u{0633}" => ["\u{FEB1}", "\u{FEB2}", "\u{FEB3}", "\u{FEB4}"], // س
@@ -64,13 +66,13 @@ class Reshaper
         "\u{0646}" => ["\u{FEE5}", "\u{FEE6}", "\u{FEE7}", "\u{FEE8}"], // ن
         "\u{0647}" => ["\u{FEE9}", "\u{FEEA}", "\u{FEEB}", "\u{FEEC}"], // ه
         "\u{0648}" => ["\u{FEED}", "\u{FEEE}", "", ""], // و - final only, no initial/medial
-        
+
         // Persian specific characters
         "\u{067E}" => ["\u{FB56}", "\u{FB57}", "\u{FB58}", "\u{FB59}"], // پ
         "\u{0686}" => ["\u{FB7A}", "\u{FB7B}", "\u{FB7C}", "\u{FB7D}"], // چ
         "\u{06AF}" => ["\u{FB92}", "\u{FB93}", "\u{FB94}", "\u{FB95}"], // گ
         "\u{0698}" => ["\u{FB8A}", "\u{FB8B}", "", ""], // ژ - final only, no initial/medial
-        
+
         // Persian Yeh (ی)
         // Format: [isolated, final, initial, medial]
         // U+06CC: Persian Yeh (ی)
@@ -133,7 +135,7 @@ class Reshaper
 
         // Separate diacritics from base characters
         $chars = $this->separateDiacritics(mb_str_split($text, 1, 'UTF-8'));
-        
+
         $reshaped = [];
         $length = count($chars);
 
@@ -220,27 +222,30 @@ class Reshaper
     private function determineForm(string $char, ?string $prevChar, ?string $nextChar): int
     {
         // Check if current character can connect forward (to next character)
-        // Current character must have initial form (index 2) and next character must be valid
-        $connectsAfter = $nextChar !== null && 
-                         isset(self::CHARACTER_FORMS[$char]) &&
-                         isset(self::CHARACTER_FORMS[$nextChar]) &&
-                         self::CHARACTER_FORMS[$char][2] !== ''; // Current char has initial form
+        // Current character must have initial form (index 2) AND next character must exist
+        $connectsAfter = $nextChar !== null &&
+            isset(self::CHARACTER_FORMS[$char]) &&
+            isset(self::CHARACTER_FORMS[$nextChar]) &&
+            self::CHARACTER_FORMS[$char][2] !== ''; // Current char has initial form
 
         // Check if previous character can connect forward (to current character)
-        // Previous character must have initial form (index 2) and current character must have final form (index 1)
-        $connectsBefore = $prevChar !== null && 
-                          isset(self::CHARACTER_FORMS[$prevChar]) &&
-                          isset(self::CHARACTER_FORMS[$char]) &&
-                          self::CHARACTER_FORMS[$prevChar][2] !== '' && // Previous char has initial form
-                          self::CHARACTER_FORMS[$char][1] !== ''; // Current char has final form
+        // Previous character must be connecting AND have initial form
+        // AND current character must be able to receive connection (has final form)
+        $connectsBefore = $prevChar !== null &&
+            isset(self::CHARACTER_FORMS[$prevChar]) &&
+            isset(self::CHARACTER_FORMS[$char]) &&
+            // Check if previous character CAN connect to next (has initial form)
+            self::CHARACTER_FORMS[$prevChar][2] !== '' &&
+            // Check if current character CAN receive connection from previous (has final form)
+            self::CHARACTER_FORMS[$char][1] !== '';
 
         // Determine form based on connections
         if ($connectsBefore && $connectsAfter) {
             return 3; // Medial (connected from both sides)
-        } elseif ($connectsAfter) {
-            return 2; // Initial (connects to next)
-        } elseif ($connectsBefore) {
-            return 1; // Final (connected from previous)
+        } elseif ($connectsBefore && !$connectsAfter) {
+            return 1; // Final (connected from previous only)
+        } elseif (!$connectsBefore && $connectsAfter) {
+            return 2; // Initial (connects to next only)
         } else {
             return 0; // Isolated (no connections)
         }

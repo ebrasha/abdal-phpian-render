@@ -2,7 +2,7 @@
     "name": "abdal/phpian-render",
     "description": " Abdal Phpian Render is a comprehensive PHP package for fixing and improving the display of Persian texts in graphical environments. This package solves common text display issues in libraries such as GD Library, FPDF, and TCPDF, providing full Right-to-Left (RTL) support.",
     "type": "library",
-    "version": "1.4.3",
+    "version": "1.4.5",
     "keywords": [
         "persian",
         "arabic",
